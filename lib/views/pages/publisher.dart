@@ -8,7 +8,7 @@ class PublisherPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('MQTT Publisher (Flutter)'),
+        title: Text('MQTT Home (Flutter)'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
