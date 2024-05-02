@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mqtt_flutter/home.dart';
-import 'package:mqtt_flutter/views/pages/subscriber.dart';
-import 'package:mqtt_flutter/views/pages/publisher.dart';
+import 'package:mqtt_flutter/views/subscriber.dart';
+import 'package:mqtt_flutter/views/publisher.dart';
 
 void main() {
   runApp(const MyApp());

@@ -5,7 +5,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: Text('MQTT Home (Flutter)'),
       ),
       body: Center(
         child: Column(
@@ -17,6 +17,7 @@ class HomePage extends StatelessWidget {
               },
               child: Text('Go to Publisher'),
             ),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/subscriber');
