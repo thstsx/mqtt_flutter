@@ -164,14 +164,7 @@ class MqttConnection {
 
   Future<void> connect() async {
     //_client = MqttClient('mosquitto', '');
-    //_client = MqttClient('test.mosquitto.org', '');
     //_client = MqttClient.withPort('broker.emqx.io', 'flutter_client', 1883);
-    //final _client = MqttClient('mqtt://localhost:1883', '');
-    //final _client = MqttServerClient('ws://127.0.0.1', ''); // conn failure
-    //final _client = MqttServerClient.withPort('ws://192.168.0.108', 'flutter_client', 1883); // conn failure
-    //final _client = MqttServerClient.withPort('ws://192.168.0.108', 'flutter_client', 9001); // conn failure
-    // final _client = MqttBrowserClient.withPort(
-    //     'ws://192.168.0.108', 'flutter_client', 9001); // conn success
     final _client = MqttBrowserClient.withPort(
         'ws://192.168.0.108', 'flutter_client', 9001); // conn success
     // cf. const mqttService = new MQTTService('ws://192.168.0.108:9001');

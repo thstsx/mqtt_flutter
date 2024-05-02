@@ -19,11 +19,47 @@ class _SubscriberPageState extends State<SubscriberPage> {
 
   final TextEditingController _topicController = TextEditingController();
   final TextEditingController _statusController = TextEditingController();
+  //final TextEditingController _statusControllers = TextEditingController();
+  //final TextEditingController _statusControlleru = TextEditingController();
   //   TextEditingController _messageController = TextEditingController();
 
   final MqttConnection _mqttConnection = MqttConnection();
   bool _isConnected = false;
   bool _isConnecting = false;
+
+  // Color _getStatusColor() {
+  //   switch (_statusController.text) {
+  //     case 'SUBSCRIBED':
+  //       return Colors.green;
+  //     case 'UNSUBSCRIBED':
+  //       return Colors.red;
+  //     default:
+  //       return Colors.black;
+  //   }
+  // }
+
+  // Color _getStatusColor() {
+  //   if (_statusController.text.toUpperCase() == 'SUBSCRIBED') {
+  //     return Colors.green;
+  //   } else if (_statusController.text.toUpperCase() == 'UNSUBSCRIBED') {
+  //     return Colors.red;
+  //   } else {
+  //     return Colors.blue;
+  //   }
+  // }
+
+  Color _getStatusColor() {
+    switch (_statusController.text.toUpperCase()) {
+      case 'SUBSCRIBED':
+        return Colors.green;
+      case 'UNSUBSCRIBED':
+        return Colors.red;
+      default:
+        //print('hey yo!');
+        //print(_statusController.text);
+        return Colors.orange; // Return black for any other status text
+    }
+  }
 
   // @override
   // void initState() {
@@ -101,15 +137,91 @@ class _SubscriberPageState extends State<SubscriberPage> {
     if (topic.isNotEmpty && _isConnected) {
       print('Subscribing to Topic: $topic');
       //_mqttConnection.subscribe(topic, MqttQos.atLeastOnce);
-      _statusController.text = 'SUBSCRIBED';
-      print('Subscribed to Topic: $topic');
+      //_statusController.text = 'SUBSCRIBED';
+
+      setState(() {
+        _statusController.text = 'SUBSCRIBED'; // Update status controller text
+      });
+
+      //print('test : statuscontroller text value : ');
+      //print(_statusController.text);
+      //print('Subscribed to Topic: $topic');
     } else if (_isConnecting) {
       print('Connection attempt is still in progress...');
     } else {
-      _statusController.text = '';
-      print('Failed to subscribe: MQTT client is not connected.');
+      //_statusController.text = '';
+      setState(() {
+        _statusController.text = ''; // Update status controller text
+      });
+      print('Failed to subscribe.');
     }
   }
+
+  void _unsubscribeFromTopic() {
+    final topic = _topicController.text.trim();
+    if (topic.isNotEmpty && _isConnected) {
+      print('Unsubscribing from Topic: $topic');
+      //_mqttConnection.unsubscribe(topic);
+      //_statusController.text = 'UNSUBSCRIBED';
+      setState(() {
+        _statusController.text =
+            'UNSUBSCRIBED'; // Update status controller text
+      });
+
+      print('Unsubscribed from Topic: $topic');
+    } else if (_isConnecting) {
+      print('Connection attempt is still in progress...');
+    } else {
+      //_statusController.text = '';
+      setState(() {
+        _statusController.text = ''; // Update status controller text
+      });
+      print('Failed to unsubscribe.');
+    }
+  }
+
+  // void _subscribeToTopic() {
+  //   final topic = _topicController.text.trim();
+  //   if (topic.isNotEmpty && _isConnected) {
+  //     print('Subscribing to Topic: $topic');
+  //     //_mqttConnection.subscribe(topic, MqttQos.atLeastOnce);
+  //     _updateStatus('SUBSCRIBED',
+  //         Colors.green); // Set status to 'SUBSCRIBED' with green color
+  //     print('Subscribed to Topic: $topic');
+  //   } else if (_isConnecting) {
+  //     print('Connection attempt is still in progress...');
+  //   } else {
+  //     _updateStatus('', Colors.black); // Clear status with black color
+  //     print('Failed to subscribe: MQTT client is not connected.');
+  //   }
+  // }
+
+  // void _unsubscribeFromTopic() {
+  //   final topic = _topicController.text.trim();
+  //   if (topic.isNotEmpty && _isConnected) {
+  //     print('Unsubscribing from Topic: $topic');
+  //     //_mqttConnection.unsubscribe(topic);
+  //     _updateStatus('UNSUBSCRIBED',
+  //         Colors.red); // Set status to 'UNSUBSCRIBED' with red color
+  //     print('Unsubscribed from Topic: $topic');
+  //   } else if (_isConnecting) {
+  //     print('Connection attempt is still in progress...');
+  //   } else {
+  //     print('No topic specified or MQTT client is not connected.');
+  //   }
+  // }
+
+  // void _updateStatus(String status, Color color) {
+  //   setState(() {
+  //     _statusText = status;
+  //     _statusTextColor = color;
+  //   });
+  // }
+
+  // void _updateStatus(String status, Color color) {
+  //   _statusController.text = status; // Update status controller's text
+  //   _statusController.style = TextStyle(color: color); // Update text color
+  // }
 
   // Future<void> _connectToBroker() async {
   //   try {
@@ -241,6 +353,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
             ),
             // ?
             //Divider(), // Add a divider
+            // --- TOPIC ------------------------------------------------
             SizedBox(height: 16),
             Container(
               padding: EdgeInsets.all(16.0),
@@ -282,6 +395,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                       ),
                     ],
                   ),
+                  // -- MESSAGE -------------------------------------------------
                   SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -319,6 +433,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                       ),
                     ],
                   ),
+                  // ---STATUS-------------------------------------------------
                   SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -349,7 +464,8 @@ class _SubscriberPageState extends State<SubscriberPage> {
                             readOnly: true,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Colors.green,
+                                //--------------------------
+                                color: _getStatusColor(),
                                 fontWeight: FontWeight.bold),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
@@ -359,6 +475,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                       ),
                     ],
                   ),
+                  // ---BUTTONS ----------------------------------------------
                   SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -379,8 +496,8 @@ class _SubscriberPageState extends State<SubscriberPage> {
                       ),
                       SizedBox(width: 16),
                       ElevatedButton(
-                        onPressed: () {},
-                        //onPressed: _unsubscribeFromTopic,
+                        //onPressed: () {},
+                        onPressed: _unsubscribeFromTopic,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red, // Background color
                         ),
