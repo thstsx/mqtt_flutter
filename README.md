@@ -23,3 +23,7 @@ Here's a general outline of the steps:
 2. Run flutter pub get to download and install the package.
 3. Import the necessary classes and functions from the MQTT client package in your Dart files where you want to use MQTT functionality.
 4. Use the imported classes and functions to connect to an MQTT broker, subscribe to topics, publish messages, etc.
+
+
+## Add package mqtt_client
+flutter pub add mqtt_client

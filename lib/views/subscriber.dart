@@ -1,53 +1,42 @@
 //import 'dart:html';
 import 'package:flutter/material.dart';
-//import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 import 'dart:async';
 //import 'package:mqtt_flutter/service/mqtt_service.dart';
-//import 'package:mqtt_client/mqtt_browser_client.dart';
-import 'package:mqtt_flutter/service/mqtt_connection.dart';
+import 'package:mqtt_client/mqtt_browser_client.dart';
+import 'package:mqtt_flutter/service/mqtt_service.dart';
+import 'package:provider/provider.dart';
 
-// =================================================================
-
+// // THE SUBSCRIBER WIDGET
 class SubscriberPage extends StatefulWidget {
+  //final MqttService mqttServiceSub;
+  //SubscriberPage(this.mqttServiceSub);
+
+  const SubscriberPage({super.key});
   @override
   _SubscriberPageState createState() => _SubscriberPageState();
 }
 
+// // THE STATE MANAGER ==================================================================
 class _SubscriberPageState extends State<SubscriberPage> {
-  //late MqttConnection _mqttConnection;
-  //String _subscribedTopic = '';
-
+  // // ==============================================================================
+  // // LOGIC ========================================================================
+  // // ==============================================================================
   final TextEditingController _topicController = TextEditingController();
   final TextEditingController _statusController = TextEditingController();
-  //final TextEditingController _statusControllers = TextEditingController();
-  //final TextEditingController _statusControlleru = TextEditingController();
-  //   TextEditingController _messageController = TextEditingController();
 
-  final MqttConnection _mqttConnection = MqttConnection();
+  // MQTT Connection
+  //MqttBrowserClient get client => _client;
+  MqttService mqttServiceSub = MqttService();
+  //MqttService mqttServiceSub = MqttService();
+  //late final MqttService mqttServiceSub;
+  //_SubscriberPageState(this.mqttServiceSub);
+  //MqttConnection _mqttConnection = MqttConnection();
+  //final CustomMqttClient _mqttConnCustom = CustomMqttClient();
   bool _isConnected = false;
   bool _isConnecting = false;
 
-  // Color _getStatusColor() {
-  //   switch (_statusController.text) {
-  //     case 'SUBSCRIBED':
-  //       return Colors.green;
-  //     case 'UNSUBSCRIBED':
-  //       return Colors.red;
-  //     default:
-  //       return Colors.black;
-  //   }
-  // }
-
-  // Color _getStatusColor() {
-  //   if (_statusController.text.toUpperCase() == 'SUBSCRIBED') {
-  //     return Colors.green;
-  //   } else if (_statusController.text.toUpperCase() == 'UNSUBSCRIBED') {
-  //     return Colors.red;
-  //   } else {
-  //     return Colors.blue;
-  //   }
-  // }
-
+  // Status Colors for the Subscriber UI
   Color _getStatusColor() {
     switch (_statusController.text.toUpperCase()) {
       case 'SUBSCRIBED':
@@ -55,122 +44,79 @@ class _SubscriberPageState extends State<SubscriberPage> {
       case 'UNSUBSCRIBED':
         return Colors.red;
       default:
-        //print('hey yo!');
-        //print(_statusController.text);
         return Colors.orange; // Return black for any other status text
     }
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   //_mqttConnection = MqttConnection();
-  //   //_connectToBroker();
-  //   try {
-  //     print('Connecting to MQTT broker...1');
-  //     _mqttConnection.connect(); //
-  //     print('Connected to MQTT broker...1');
-  //   } catch (e) {
-  //     print('Failed to connect to MQTT broker: $e');
-  //   }
-  // }
-
+  // // ==============================================================================
+  // // INITIALIZATION ---------------------------------------------------------------
+  // // ==============================================================================
   @override
   void initState() {
     super.initState();
     //_mqttConnection = MqttConnection();
-    //_connectToBroker();
-    // print('Connecting to MQTT broker(1)...');
-    // _mqttConnection.connect().catchError((e) {
-    //   print('Failed to connect to MQTT broker(1): $e');
-    // }).then((_) {
-    //   print('MQTT broker(1)...');
-    // });
-    _connectToBroker();
+    // _mqttConnection = MqttConnection(); // Initialize _mqttConnection
+    // //_client = _mqttConnection.client;
+    // _connectToBroker();
+    // -----------------------------
+    //mqttServiceSub.connect();
+    //mqttServiceSub = MqttService();
+    mqttServiceSub.connect('client_sub');
   }
+  // // ==============================================================================
+  // // INITIALIZATION ENDED ---------------------------------------------------------
+  // // ==============================================================================
 
-  // void _subscribeToTopic() {
-  //   final topic = _topicController.text.trim();
-  //   if (topic.isNotEmpty) {
-  //     print('Subscribing to Topic: $topic');
-  //     //_mqttConnection.subscribe(topic, MqttQos.atLeastOnce);
-  //     _statusController.text = 'SUBSCRIBED';
-  //     print('Subscribed to Topic: $topic');
-  //   } else {
-  //     _statusController.text = '';
-  //   }
-  // }
-  // void _subscribeToTopic() {
-  //   final topic = _topicController.text.trim();
-  //   if (topic.isNotEmpty) {
-  //     if (_mqttConnection.isConnected) {
-  //       print('Subscribing to Topic: $topic');
-  //       //_mqttConnection.subscribe(topic, MqttQos.atLeastOnce);
-  //       _statusController.text = 'SUBSCRIBED';
-  //       print('Subscribed to Topic: $topic');
-  //     } else {
-  //       print('Failed to subscribe: MQTT client is not connected.');
-  //       // Optionally, you can show a message to the user indicating the connection status.
-  //     }
-  //   } else {
-  //     _statusController.text = '';
-  //   }
-  // }
-
-  // void _subscribeToTopic() {
-  //   final topic = _topicController.text.trim();
-  //   if (topic.isNotEmpty && _isConnected) {
-  //     // Check connection status
-  //     print('Subscribing to Topic: $topic');
-  //     //_mqttConnection.subscribe(topic, MqttQos.atLeastOnce);
-  //     _statusController.text = 'SUBSCRIBED';
-  //     print('Subscribed to Topic: $topic');
-  //   } else {
-  //     _statusController.text = '';
-  //     print('Failed to subscribe: MQTT client is not connected.');
-  //     // Optionally, you can show a message to the user indicating the connection status.
-  //   }
-  // }
-
-  void _subscribeToTopic() {
+  void _subscribeToTopic(mqttServiceSub) async {
     final topic = _topicController.text.trim();
-    if (topic.isNotEmpty && _isConnected) {
+
+    print('mqtt service sub : $mqttServiceSub');
+    if (topic.isNotEmpty) {
       print('Subscribing to Topic: $topic');
       //_mqttConnection.subscribe(topic, MqttQos.atLeastOnce);
       //_statusController.text = 'SUBSCRIBED';
+      print('mqtt qos : $MqttQos.atLeastOnce');
 
+      try {
+        // Ensure that the MQTT client is connected before subscribing
+        await mqttServiceSub.connect('flutter_client');
+      } catch (e) {
+        print('Failed to connect to MQTT broker: $e');
+        return;
+      }
+
+      // After connecting, subscribe to the topic
+      mqttServiceSub.subscribe(topic, MqttQos.atLeastOnce);
+      print('hoho?');
       setState(() {
         _statusController.text = 'SUBSCRIBED'; // Update status controller text
       });
-
-      //print('test : statuscontroller text value : ');
-      //print(_statusController.text);
-      //print('Subscribed to Topic: $topic');
-    } else if (_isConnecting) {
-      print('Connection attempt is still in progress...');
+      print('huhu?');
+      print('Subscribed to Topic: $topic');
     } else {
       //_statusController.text = '';
       setState(() {
         _statusController.text = ''; // Update status controller text
       });
-      print('Failed to subscribe.');
+      print('Failed to subscribe: Topic is empty.');
     }
   }
 
-  void _unsubscribeFromTopic() {
+// async added
+  void _unsubscribeFromTopic(mqttServiceSub) async {
     final topic = _topicController.text.trim();
-    if (topic.isNotEmpty && _isConnected) {
+    if (topic.isNotEmpty) {
+      // --------------------------------------------------------------------
       print('Unsubscribing from Topic: $topic');
-      //_mqttConnection.unsubscribe(topic);
-      //_statusController.text = 'UNSUBSCRIBED';
+
+      mqttServiceSub.unsubscribe(topic);
+
       setState(() {
-        _statusController.text =
-            'UNSUBSCRIBED'; // Update status controller text
+        _statusController.text = 'UNSUBSCRIBED';
       });
 
       print('Unsubscribed from Topic: $topic');
-    } else if (_isConnecting) {
-      print('Connection attempt is still in progress...');
+      // -----------------------------------------------------------------------
     } else {
       //_statusController.text = '';
       setState(() {
@@ -180,144 +126,52 @@ class _SubscriberPageState extends State<SubscriberPage> {
     }
   }
 
-  // void _subscribeToTopic() {
-  //   final topic = _topicController.text.trim();
-  //   if (topic.isNotEmpty && _isConnected) {
-  //     print('Subscribing to Topic: $topic');
-  //     //_mqttConnection.subscribe(topic, MqttQos.atLeastOnce);
-  //     _updateStatus('SUBSCRIBED',
-  //         Colors.green); // Set status to 'SUBSCRIBED' with green color
-  //     print('Subscribed to Topic: $topic');
-  //   } else if (_isConnecting) {
-  //     print('Connection attempt is still in progress...');
-  //   } else {
-  //     _updateStatus('', Colors.black); // Clear status with black color
-  //     print('Failed to subscribe: MQTT client is not connected.');
-  //   }
-  // }
-
-  // void _unsubscribeFromTopic() {
-  //   final topic = _topicController.text.trim();
-  //   if (topic.isNotEmpty && _isConnected) {
-  //     print('Unsubscribing from Topic: $topic');
-  //     //_mqttConnection.unsubscribe(topic);
-  //     _updateStatus('UNSUBSCRIBED',
-  //         Colors.red); // Set status to 'UNSUBSCRIBED' with red color
-  //     print('Unsubscribed from Topic: $topic');
-  //   } else if (_isConnecting) {
-  //     print('Connection attempt is still in progress...');
-  //   } else {
-  //     print('No topic specified or MQTT client is not connected.');
-  //   }
-  // }
-
-  // void _updateStatus(String status, Color color) {
-  //   setState(() {
-  //     _statusText = status;
-  //     _statusTextColor = color;
-  //   });
-  // }
-
-  // void _updateStatus(String status, Color color) {
-  //   _statusController.text = status; // Update status controller's text
-  //   _statusController.style = TextStyle(color: color); // Update text color
-  // }
-
+//----------------------------------------------------
   // Future<void> _connectToBroker() async {
+  //   _mqttConnection = MqttConnection();
   //   try {
-  //     print('Connecting to MQTT broker(2)...');
-  //     await _mqttConnection.connect();
-  //     print('MQTT broker(2)...');
-  //   } catch (e) {
-  //     print('Failed to connect to MQTT broker(2): $e');
-  //   }
-  // }
-
-  // Future<void> _connectToBroker() async {
-  //   try {
-  //     await _mqttConnection.connect();
   //     setState(() {
-  //       _isConnected = true; // Update connection status
+  //       _isConnecting = true;
   //     });
-  //   } catch (e) {
-  //     print('Failed to connect to MQTT broker: $e');
-  //     setState(() {
-  //       _isConnected = false; // Update connection status
-  //     });
-  //   }
-  // }
-
-  // Future<void> _connectToBroker() async {
-  //   try {
   //     print('Connecting to MQTT broker(1)...');
-  //     await _mqttConnection.connect();
+
+  //     // 0503
+  //     //final connectionFuture = _mqttConnection.connect();
+
+  //     await Future.any([
+  //       // old one
+  //       _mqttConnection.connect(),
+  //       // 0503
+  //       //connectionFuture,
+  //       // 0503
+  //       // Future.delayed(Duration(seconds: 10)).then((_) {
+  //       //   // If _mqttConnection.connect() hasn't completed within 10 seconds, throw a TimeoutException
+  //       //   throw TimeoutException('Connection timed out');
+  //       // }),
+  //       // old one
+  //       Future.delayed(
+  //           const Duration(seconds: 10)), // Adjust timeout duration as needed
+  //     ]);
   //     setState(() {
   //       _isConnected = true; // Update connection status
+  //       _isConnecting = false;
   //     });
   //     print('Connected to MQTT broker(1)');
   //   } catch (e) {
   //     print('Failed to connect to MQTT broker: $e');
   //     setState(() {
   //       _isConnected = false; // Update connection status
+  //       _isConnecting = false;
   //     });
   //   }
   // }
+  // // ==============================================================================
+  // // LOGIC ENDED ==================================================================
+  // // ==============================================================================
 
-  // Future<void> _connectToBroker() async {
-  //   try {
-  //     print('Connecting to MQTT broker(1)...');
-  //     // Start the connection attempt
-  //     final connectionFuture = _mqttConnection.connect();
-
-  //     // Set a timeout for the connection attempt (e.g., 10 seconds)
-  //     final timeout = Duration(seconds: 10);
-  //     await Future.any([connectionFuture, Future.delayed(timeout)]);
-
-  //     // Check if the connection attempt succeeded or timed out
-  //     if (!_mqttConnection.isConnected) {
-  //       throw TimeoutException('Connection attempt timed out');
-  //     }
-
-  //     setState(() {
-  //       _isConnected = true; // Update connection status
-  //     });
-  //     print('Connected to MQTT broker(1)');
-  //   } catch (e) {
-  //     print('Failed to connect to MQTT broker: $e');
-  //     setState(() {
-  //       _isConnected = false; // Update connection status
-  //     });
-  //   }
-  // }
-
-  Future<void> _connectToBroker() async {
-    try {
-      setState(() {
-        _isConnecting = true;
-      });
-      print('Connecting to MQTT broker(1)...');
-      await Future.any([
-        _mqttConnection.connect(),
-        Future.delayed(
-            Duration(seconds: 10)), // Adjust timeout duration as needed
-      ]);
-      setState(() {
-        _isConnected = true; // Update connection status
-        _isConnecting = false;
-      });
-      print('Connected to MQTT broker(1)');
-    } catch (e) {
-      print('Failed to connect to MQTT broker: $e');
-      setState(() {
-        _isConnected = false; // Update connection status
-        _isConnecting = false;
-      });
-    }
-  }
-
-  // ==============================================================================
-  // ==============================================================================
-  // Design Part -----------------------------------------------------------------
+  // // ==============================================================================
+  // // INTERFACE ====================================================================
+  // // ==============================================================================
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -325,17 +179,17 @@ class _SubscriberPageState extends State<SubscriberPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('MQTT Home (Flutter)'),
+        title: const Text('MQTT Home (Flutter)'),
       ),
       body: Container(
         color: Colors.white,
         //color: Colors.grey[200],
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         //padding: const EdgeInsets.only(bottom: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'MQTT Flutter',
               style: TextStyle(
                 fontSize: 24,
@@ -343,8 +197,8 @@ class _SubscriberPageState extends State<SubscriberPage> {
                 color: Colors.black,
               ),
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               'Subscriber',
               style: TextStyle(
                 fontSize: 20,
@@ -354,9 +208,9 @@ class _SubscriberPageState extends State<SubscriberPage> {
             // ?
             //Divider(), // Add a divider
             // --- TOPIC ------------------------------------------------
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Container(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               color: Colors.grey[200], // Set background color to gray
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,7 +218,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
+                      const Expanded(
                         flex: 1,
                         child: Text(
                           'Topic',
@@ -374,7 +228,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         flex: 2,
                         child: Container(
@@ -387,7 +241,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                           ),
                           child: TextField(
                             controller: _topicController,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                             ),
                           ),
@@ -396,11 +250,11 @@ class _SubscriberPageState extends State<SubscriberPage> {
                     ],
                   ),
                   // -- MESSAGE -------------------------------------------------
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
+                      const Expanded(
                         flex: 1,
                         child: Text(
                           'Message',
@@ -411,17 +265,17 @@ class _SubscriberPageState extends State<SubscriberPage> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         flex: 2,
                         child: Container(
                           width: boxWidth,
                           decoration: BoxDecoration(
-                            color: Color.fromRGBO(239, 255, 243, 1),
+                            color: const Color.fromRGBO(239, 255, 243, 1),
                             borderRadius:
                                 BorderRadius.circular(8.0), // Add border radius
                           ),
-                          child: TextField(
+                          child: const TextField(
                             //controller: _messageController,
                             textAlign: TextAlign.center,
                             maxLines: 10,
@@ -434,11 +288,11 @@ class _SubscriberPageState extends State<SubscriberPage> {
                     ],
                   ),
                   // ---STATUS-------------------------------------------------
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
+                      const Expanded(
                         flex: 1,
                         child: Text(
                           'Status',
@@ -449,13 +303,13 @@ class _SubscriberPageState extends State<SubscriberPage> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         flex: 2,
                         child: Container(
                           width: boxWidth,
                           decoration: BoxDecoration(
-                            color: Color.fromRGBO(223, 247, 255, 1),
+                            color: const Color.fromRGBO(223, 247, 255, 1),
                             borderRadius:
                                 BorderRadius.circular(8.0), // Add border radius
                           ),
@@ -467,7 +321,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                                 //--------------------------
                                 color: _getStatusColor(),
                                 fontWeight: FontWeight.bold),
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                             ),
                           ),
@@ -475,18 +329,25 @@ class _SubscriberPageState extends State<SubscriberPage> {
                       ),
                     ],
                   ),
-                  // ---BUTTONS ----------------------------------------------
-                  SizedBox(height: 16),
+                  // --- SUBSCRIBE BUTTON ----------------------------------------------
+
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
                         //onPressed: () {},
-                        onPressed: _subscribeToTopic,
+                        //onPressed: _subscribeToTopic,
+                        //onPressed: () => _subscribeToTopic(mqttServiceSub),
+                        onPressed: () {
+                          var mqttServiceSub =
+                              Provider.of<MqttService>(context, listen: false);
+                          _subscribeToTopic(mqttServiceSub);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green, // Background color
                         ),
-                        child: Text(
+                        child: const Text(
                           'Subscribe',
                           style: TextStyle(
                             color: Colors.white,
@@ -494,14 +355,21 @@ class _SubscriberPageState extends State<SubscriberPage> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 16),
+                      // --- UNSUBSCRIBE BUTTON -----------------------------------------------------------
+                      const SizedBox(width: 16),
                       ElevatedButton(
                         //onPressed: () {},
-                        onPressed: _unsubscribeFromTopic,
+                        //onPressed: _unsubscribeFromTopic,
+                        //onPressed: () => _unsubscribeFromTopic(mqttServiceSub),
+                        onPressed: () {
+                          var mqttServiceSub =
+                              Provider.of<MqttService>(context, listen: false);
+                          _unsubscribeFromTopic(mqttServiceSub);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red, // Background color
                         ),
-                        child: Text(
+                        child: const Text(
                           'Unsubscribe',
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
@@ -509,6 +377,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                       ),
                     ],
                   ),
+                  //
                 ],
               ),
             ),
@@ -517,4 +386,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
       ),
     );
   }
+  // // ==============================================================================
+  // // INTERFACE ENDED ==============================================================
+  // // ==============================================================================
 }

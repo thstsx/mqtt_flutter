@@ -2,13 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:mqtt_flutter/home.dart';
 import 'package:mqtt_flutter/views/subscriber.dart';
 import 'package:mqtt_flutter/views/publisher.dart';
+import 'package:mqtt_flutter/service/mqtt_service.dart';
+//--
+import 'package:provider/provider.dart'; // Import Provider package
 
+// void main() {
+//   runApp(const MyApp());
+// }
+// void main() {
+//   runApp(
+//     //Provider.debugCheckInvalidValueType = null;
+//     // Wrap your root widget with MultiProvider
+//     MultiProvider(
+//       providers: [
+//         // Provide the MqttService instance
+//         Provider(create: (_) => MqttService()),
+//       ],
+//       child: const MyApp(),
+//     ),
+//   );
+// }
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => MqttService()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
+// // THE ROOT WIDGET ----------------------------------------------------------
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  //const MyApp({super.key});
+  const MyApp({Key? key});
 
   // This widget is the root of your application.
   @override
@@ -18,7 +46,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         //colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        colorScheme: ColorScheme.light().copyWith(primary: Colors.deepPurple),
+        colorScheme:
+            const ColorScheme.light().copyWith(primary: Colors.deepPurple),
         useMaterial3: true,
       ),
       initialRoute: '/',
