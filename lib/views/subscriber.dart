@@ -6,24 +6,137 @@ import 'dart:async';
 import 'package:mqtt_client/mqtt_browser_client.dart';
 import 'package:mqtt_flutter/service/mqtt_service.dart';
 import 'package:provider/provider.dart';
+import 'package:mqtt_flutter/service/notification_service.dart';
+
+// class MyStateManager {
+//   final myListNotifier = ListNotifier();
+
+//   void send(String text) {
+//     myListNotifier.add(text);
+//   }
+// }
+
+// class ListNotifier extends ValueNotifier<List<String>> {
+//   ListNotifier() : super([]);
+
+//   void add(String listItem) {
+//     value.add(listItem);
+//     notifyListeners(); // here
+//   }
+// }
+
+// class ListNotifier extends ValueNotifier<List<String>> {
+//   ListNotifier() : super([]);
+
+//   void add(String listItem) {
+//     value.add(listItem);
+//     notifyListeners(); // Notify listeners after adding the item
+//   }
+// }
 
 // // THE SUBSCRIBER WIDGET
 class SubscriberPage extends StatefulWidget {
   //final MqttService mqttServiceSub;
   //SubscriberPage(this.mqttServiceSub);
+  // --------------------------------------------------------------------------
+  // final ValueNotifier<String> _messageValueNotifier;
+  // SubscriberPage({required ValueNotifier<String> messageValueNotifier})
+  //     : _messageValueNotifier = messageValueNotifier;
+  // --------------------------------------------------------------------------
+  // final ValueNotifier<String> messageValueNotifier;
 
+  // SubscriberPage({required this.messageValueNotifier});
+  // ----------------------------------------------------
   const SubscriberPage({super.key});
+
+  // -------------------------------------------------------------------------------
+  // const SubscriberPage({Key? key, required this.onStateReady})
+  //     : super(key: key);
+  // const SubscriberPage({Key? key}) : super(key: key);
+  // // Define a callback function
+  // //final void Function(_SubscriberPageState) onStateReady;
+  // static final GlobalKey<_SubscriberPageState> subscriberPageKey =
+  //     GlobalKey<_SubscriberPageState>();
+  // final void Function(String) onUpdateMessage;
+
+  // const SubscriberPage({Key? key, required this.onUpdateMessage})
+  //     : super(key: key);
+  // ---------------------------------------------------------------------
+
   @override
   _SubscriberPageState createState() => _SubscriberPageState();
 }
 
 // // THE STATE MANAGER ==================================================================
 class _SubscriberPageState extends State<SubscriberPage> {
+  // ---------------------------------------
+
+  //late final ValueNotifier<String> messageValueNotifier;
+
+  ValueNotifier<String> messageValueNotifier = ValueNotifier<String>('');
+
+  //final MyStateManager _myStateManager = MyStateManager();
+  //final ListNotifier myListNotifier = ListNotifier();
+  // Call the callback function with the state object
+  // widget.onStateReady(this);
+  // Method to update messageValueNotifier with the received message
+  // void updateMessage(String message) {
+  //   setState(() {
+  //     messageValueNotifier.value = message;
+  //   });
+  // }
+
+  //List<String> messages = [];
+
+  // void updateMessages(String message) {
+  //   setState(() {
+  //     messages.add(message);
+  //     // widget.messageValueNotifier.value =
+  //     //     message; // Update messageValueNotifier
+  //   });
+  //   widget.messageValueNotifier.value = message; // Update messageValueNotifier
+  // }
+  // -----------------------------------------------------------------------------------
+  //final NotificationService notificationService;
+
+  // --------------------------------------------------------------------------------
+  @override
+  void dispose() {
+    messageValueNotifier.dispose();
+    super.dispose();
+  }
+  // -------------------------------------------
+
+  _SubscriberPageState();
+  //_SubscriberPageState(this.notificationService);
   // // ==============================================================================
   // // LOGIC ========================================================================
   // // ==============================================================================
   final TextEditingController _topicController = TextEditingController();
   final TextEditingController _statusController = TextEditingController();
+  TextEditingController _messageController = TextEditingController();
+  //late final TextEditingController _messageController;
+  //TextEditingController _messageController = TextEditingController();
+
+  // ValueNotifier<String> _messageValueNotifier =
+  //     // to be modified
+  //     ValueNotifier<String>('Initial value');
+  // ValueNotifier<String> messageValueNotifier =
+  //     ValueNotifier<String>('f you lololol');
+  // SubscriberPage subscriberPage =
+  //     SubscriberPage(messageValueNotifier: messageValueNotifier);
+
+//TextEditingController _messageController = TextEditingController();
+
+// Inside initState or wherever you initialize your state:
+// _messageController.addListener(() {
+//   _messageValueNotifier.value = _messageController.text;
+// });
+  // final TextEditingController _messageController =
+  //     TextEditingController(); // Initialize the TextEditingController
+// _messageController.addListener(() {
+//   _messageValueNotifier.value = _messageController.text;
+// });
 
   // MQTT Connection
   //MqttBrowserClient get client => _client;
@@ -33,8 +146,26 @@ class _SubscriberPageState extends State<SubscriberPage> {
   //_SubscriberPageState(this.mqttServiceSub);
   //MqttConnection _mqttConnection = MqttConnection();
   //final CustomMqttClient _mqttConnCustom = CustomMqttClient();
-  bool _isConnected = false;
-  bool _isConnecting = false;
+  //bool _isConnected = false;
+  //bool _isConnecting = false;
+  //String receivedMessage = '';
+
+  // Define a ValueNotifier<String>
+  // ValueNotifier<String> messageValueNotifier =
+  //     ValueNotifier<String>('initial value');
+
+  //ValueNotifier<String> messageValueNotifier
+// ------------------------------------------------------------
+  //final myListNotifier = ValueNotifier<List<String>>([]);
+  //final newList = myListNotifier.value.toList();
+// Listen for updates from the publisher and update the ValueNotifier
+// mqttServiceSub.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+//   final recMess = c![0].payload as MqttPublishMessage;
+//   final pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+
+//   // Update the ValueNotifier with the received message
+//   messageValueNotifier.value = pt;
+// });
 
   // Status Colors for the Subscriber UI
   Color _getStatusColor() {
@@ -62,11 +193,92 @@ class _SubscriberPageState extends State<SubscriberPage> {
     //mqttServiceSub.connect();
     //mqttServiceSub = MqttService();
     mqttServiceSub.connect('client_sub');
+    // Obtain the BuildContext
+    //BuildContext context = context;
+    //mqttServiceSub.connect('client_sub', context);
+    //_messageController = TextEditingController();
+    // _messageController = TextEditingController(text: '');
+    //_messageController.addListener(_handleMessageChange as VoidCallback);
+    // _messageController.addListener(() {
+    //   _messageValueNotifier.value = _messageController.text;
+    // });
+    //mqttServiceSub.data.addListener(updatePt);
+    // -------------------------------------------
+    //messageValueNotifier = ValueNotifier<String>('Initial value (!)');
+    //SubscriberPage.subscriberPageKey.currentState = this;
+    //notificationService.initialize();
   }
+
   // // ==============================================================================
   // // INITIALIZATION ENDED ---------------------------------------------------------
   // // ==============================================================================
+  // @override
+  // void dispose() {
+  //   // Dispose the controller when the widget is disposed
+  //   _messageController.dispose();
+  //   super.dispose();
+  // }
+  // Dispose the TextEditingController and ValueNotifier to avoid memory leaks
+  // @override
+  // void dispose() {
+  //   _messageController.dispose();
+  //   //_messageValueNotifier.dispose();
+  //   super.dispose();
+  // }
 
+  // void updatePt() {
+  //   String pt = '';
+  //   setState(() {
+  //     pt = clientUpdate(mqttServiceSub);
+  //   });
+  // }
+
+  // @override
+  // void dispose() {
+  //   mqttServiceSub.data.removeListener(updatePt);
+  //   super.dispose();
+  // }
+
+  // Handle changes in the message controller
+  // void _handleMessageChange() {
+  //   String message = _messageController.text;
+  //   // Process the received message here
+  //   print('Received message (from publisher): $message');
+  // }
+  // void _handleMessageChange(message) {
+  //   //String message = _messageController.text;
+  //   // Process the received message here
+  //   print('Received message (from UI): $message');
+  //   // Update the text controller
+  //   setState(() {
+  //     _messageController.text = message;
+  //     print('Message updated: $message'); // Print the updated message
+  //   });
+  // }
+  // -------------------------------------------------------------------------------------
+
+  List<String> messageList = [];
+
+  void listMessages(String data2) {
+    setState(() {
+      // Assuming data2 is the latest message received
+      messageList.add(data2);
+      _messageController.text = data2;
+    });
+  }
+
+  // ---------------------------------------------------
+  void updateMessageValue(String message) {
+    messageValueNotifier.value = message;
+
+    //myListNotifier.value.add(message);
+    //widget.onUpdateMessage(message);
+    // setState(() {
+    //   messageValueNotifier.value = message;
+    // });
+  }
+
+  // ----------------------------------------------------
   void _subscribeToTopic(mqttServiceSub) async {
     final topic = _topicController.text.trim();
 
@@ -126,45 +338,19 @@ class _SubscriberPageState extends State<SubscriberPage> {
     }
   }
 
-//----------------------------------------------------
-  // Future<void> _connectToBroker() async {
-  //   _mqttConnection = MqttConnection();
-  //   try {
-  //     setState(() {
-  //       _isConnecting = true;
-  //     });
-  //     print('Connecting to MQTT broker(1)...');
-
-  //     // 0503
-  //     //final connectionFuture = _mqttConnection.connect();
-
-  //     await Future.any([
-  //       // old one
-  //       _mqttConnection.connect(),
-  //       // 0503
-  //       //connectionFuture,
-  //       // 0503
-  //       // Future.delayed(Duration(seconds: 10)).then((_) {
-  //       //   // If _mqttConnection.connect() hasn't completed within 10 seconds, throw a TimeoutException
-  //       //   throw TimeoutException('Connection timed out');
-  //       // }),
-  //       // old one
-  //       Future.delayed(
-  //           const Duration(seconds: 10)), // Adjust timeout duration as needed
-  //     ]);
-  //     setState(() {
-  //       _isConnected = true; // Update connection status
-  //       _isConnecting = false;
-  //     });
-  //     print('Connected to MQTT broker(1)');
-  //   } catch (e) {
-  //     print('Failed to connect to MQTT broker: $e');
-  //     setState(() {
-  //       _isConnected = false; // Update connection status
-  //       _isConnecting = false;
-  //     });
-  //   }
+  // ------------------------------------------------------------------------
+  // List<String> messageList = [];
+  // void displayMessage(String message) {
+  //   messageList.add(message);
   // }
+
+  String combinedMessages = '';
+
+  void displayMessage(String topic, String message) {
+    String formattedMessage = 'Received Message: $message\nOn topic: $topic\n';
+    combinedMessages = formattedMessage + combinedMessages;
+  }
+
   // // ==============================================================================
   // // LOGIC ENDED ==================================================================
   // // ==============================================================================
@@ -176,16 +362,18 @@ class _SubscriberPageState extends State<SubscriberPage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double boxWidth = (2 / 3) * screenWidth;
-
+    ValueNotifier<String> data2Notifier =
+        Provider.of<MqttService>(context).data;
+    String? data2 = data2Notifier.value;
+    bool isSnackbarDisplayed = false;
+    // ---------------------------------------------------------------------------------------
     return Scaffold(
       appBar: AppBar(
         title: const Text('MQTT Home (Flutter)'),
       ),
       body: Container(
         color: Colors.white,
-        //color: Colors.grey[200],
         padding: const EdgeInsets.all(16.0),
-        //padding: const EdgeInsets.only(bottom: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -236,8 +424,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                           decoration: BoxDecoration(
                             color: Colors
                                 .white, // Set background color of input box to white
-                            borderRadius:
-                                BorderRadius.circular(8.0), // Add border radius
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: TextField(
                             controller: _topicController,
@@ -272,20 +459,50 @@ class _SubscriberPageState extends State<SubscriberPage> {
                           width: boxWidth,
                           decoration: BoxDecoration(
                             color: const Color.fromRGBO(239, 255, 243, 1),
-                            borderRadius:
-                                BorderRadius.circular(8.0), // Add border radius
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: const TextField(
-                            //controller: _messageController,
-                            textAlign: TextAlign.center,
-                            maxLines: 10,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                            ),
+                          // -----------------------------------------------
+                          // child: TextField(
+                          //   controller: _messageController,
+                          //   textAlign: TextAlign.center,
+                          //   maxLines: 10,
+                          //   decoration: InputDecoration(
+                          //     border: OutlineInputBorder(),
+                          //   ),
+                          // ),
+                          // --- DISPLAY PUBLISHED MESSAGES ------------------------------------
+                          child: ValueListenableBuilder<String>(
+                            valueListenable: messageValueNotifier,
+                            //valueListenable: myListNotifier,
+                            //valueListenable: mqttServiceSub.data,
+                            builder: (BuildContext context, String value,
+                                Widget? child) {
+                              if (data2 != null && data2.isNotEmpty) {
+                                print('value (data2) : $data2');
+                              }
+
+                              // --------------------------------------------------------------
+                              return TextField(
+                                //controller: _messageController,
+                                controller: TextEditingController(text: data2),
+                                textAlign: TextAlign.center,
+                                maxLines: 10,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                ),
+                                //readOnly: true,
+                              );
+                              // --------------------------------------------------------
+                            },
+                            // builder
+                            // -----------------------------------------------------
                           ),
+                          //valueListenable: mqttServiceSub.data,
+                          // child 2
                         ),
+                        // child 1
                       ),
-                    ],
+                    ], // Children
                   ),
                   // ---STATUS-------------------------------------------------
                   const SizedBox(height: 16),
@@ -310,8 +527,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                           width: boxWidth,
                           decoration: BoxDecoration(
                             color: const Color.fromRGBO(223, 247, 255, 1),
-                            borderRadius:
-                                BorderRadius.circular(8.0), // Add border radius
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: TextField(
                             controller: _statusController,
@@ -330,7 +546,6 @@ class _SubscriberPageState extends State<SubscriberPage> {
                     ],
                   ),
                   // --- SUBSCRIBE BUTTON ----------------------------------------------
-
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -345,7 +560,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                           _subscribeToTopic(mqttServiceSub);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green, // Background color
+                          backgroundColor: Colors.green,
                         ),
                         child: const Text(
                           'Subscribe',
@@ -367,7 +582,7 @@ class _SubscriberPageState extends State<SubscriberPage> {
                           _unsubscribeFromTopic(mqttServiceSub);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red, // Background color
+                          backgroundColor: Colors.red,
                         ),
                         child: const Text(
                           'Unsubscribe',
@@ -377,7 +592,44 @@ class _SubscriberPageState extends State<SubscriberPage> {
                       ),
                     ],
                   ),
-                  //
+                  // ----- NOTIFICATIONS(SNACK BAR) ----------------------------------------------------------------
+                  // Snackbar Notifications
+                  const SizedBox(height: 8),
+                  Builder(
+                    builder: (BuildContext context) {
+                      String? data2 =
+                          Provider.of<MqttService>(context).data.value;
+                      // Show Snackbar with data2 value
+                      // WidgetsBinding.instance!.addPostFrameCallback((_) {
+                      //   ScaffoldMessenger.of(context).showSnackBar(
+                      //     SnackBar(
+                      //       content: Text('New meesage arrived : $data2'),
+                      //       duration: Duration(seconds: 3),
+                      //     ),
+                      //   );
+                      // });
+                      // -------------------------------------------------------------------------
+                      if (data2 != null &&
+                          data2.isNotEmpty &&
+                          !isSnackbarDisplayed) {
+                        // Show Snackbar with data2 value
+                        WidgetsBinding.instance!.addPostFrameCallback((_) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  "Notification : New Message '$data2' arrived."),
+                              backgroundColor: Colors.blue,
+                              duration: Duration(seconds: 3),
+                            ),
+                          );
+                        });
+                        isSnackbarDisplayed = true;
+                      }
+                      // Placeholder widget
+                      return Container();
+                    },
+                  ),
+                  // -----------------------------------------------------------------------------------------------
                 ],
               ),
             ),

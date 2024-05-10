@@ -5,14 +5,16 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'dart:async';
 import 'package:mqtt_flutter/service/mqtt_service.dart';
 import 'package:mqtt_client/mqtt_browser_client.dart';
+import 'package:mqtt_flutter/views/subscriber.dart';
+import 'package:provider/provider.dart';
 
-// // PUBLISHER WIDGET
+// // THE PUBLISHER WIDGET
 class PublisherPage extends StatefulWidget {
   @override
   _PublisherPageState createState() => _PublisherPageState();
 }
 
-// // STATE MANAGER ==================================================================
+// // THE STATE MANAGER ==================================================================
 class _PublisherPageState extends State<PublisherPage> {
   // // ==============================================================================
   // // LOGIC ------------------------------------------------------------------------
@@ -26,8 +28,8 @@ class _PublisherPageState extends State<PublisherPage> {
 
   MqttService mqttServicePub = MqttService();
 
-  bool _isConnected = false;
-  bool _isConnecting = false;
+  //bool _isConnected = false;
+  //bool _isConnecting = false;
 
   // // ==============================================================================
   // // INITIALIZATION ---------------------------------------------------------------
@@ -39,6 +41,7 @@ class _PublisherPageState extends State<PublisherPage> {
     //mqttServicePub.connect();
     mqttServicePub = MqttService();
     mqttServicePub.connect('client_pub');
+    //mqttServicePub.connect('client_pub', context);
   }
   // // ==============================================================================
   // // INITIALIZATION ENDED ---------------------------------------------------------
@@ -250,9 +253,19 @@ class _PublisherPageState extends State<PublisherPage> {
   void _publishMessage(mqttServicePub) {
     final pubTopic = _topicController.text.trim();
     final pubMessage = _messageController.text.trim();
+    print('pub topic2 : $pubTopic');
+    print('pub message2 : $pubMessage');
 
     if (pubTopic.isNotEmpty) {
       mqttServicePub.publishMessage(pubTopic, pubMessage);
+
+      // Update message value in subscriber
+      // var subscriberPageState =
+      //     context.findAncestorStateOfType<_SubscriberPageState>();
+      // Provide the callback function to SubscriberPage
+      // SubscriberPage subscriberPage =
+      //     Provider.of<SubscriberPage>(context, listen: false);
+      // subscriberPage.onUpdateMessage(pubMessage);
     } else {
       print('Failed to publish.');
     }

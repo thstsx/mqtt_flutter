@@ -27,6 +27,11 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => MqttService()),
+        // ------------------------------------------------------
+        // Provider<ValueNotifier<String>>(
+        //   create: (_) => ValueNotifier<String>('Initial value'),
+        // ),
+        // ----------------------------------------------------------
       ],
       child: const MyApp(),
     ),
@@ -55,6 +60,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomePage(),
         '/publisher': (context) => PublisherPage(),
         '/subscriber': (context) => SubscriberPage(),
+        // '/subscriber': (context) =>
+        //     SubscriberPage(messageValueNotifier: ValueNotifier<String>('')),
       },
       //home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
